@@ -51,6 +51,32 @@ endpoints:
       - "artifacts"
       - "ocr"
       - "chain"
+
+# Memory plugin for cross-chat memory per user
+memory:
+  disabled: false
+  validKeys:
+    - "user_preferences"
+    - "domain_knowledge"
+    - "frequent_queries"
+    - "team_context"
+  tokenLimit: 2000
+  personalize: true
+  agent:
+    provider: "anthropic"
+    model: "claude-haiku-4-5-20251001"
+    instructions: "You are a memory assistant. Extract durable, useful facts about the user (their role, team, common topics, preferences, important deal IDs they track) for future conversations. Only store non-sensitive, work-relevant facts."
+
+# Permissions — enable SHARE_PUBLIC for the USER role so managers can share agents
+permissions:
+  agents:
+    create: true
+    use: true
+    share_public: true
+  prompts:
+    use: true
+    create: true
+    share_public: true
   anthropic:
     apiKey: "${ANTHROPIC_API_KEY}"
     models:

@@ -12,6 +12,10 @@ interface:
   prompts: true
   bookmarks: true
   multiConvo: true
+  agents:
+    allowedProviders:
+      - "anthropic"
+    disableBuilder: false
 
 registration:
   socialLogins: []
@@ -29,11 +33,25 @@ mcpServers:
     env:
       PIPEDRIVE_API_TOKEN: "${PIPEDRIVE_API_TOKEN}"
       LOG_LEVEL: "info"
-    timeout: 60000
-    initTimeout: 30000
+    timeout: 120000
+    initTimeout: 60000
     chatMenu: true
 
 endpoints:
+  agents:
+    disableBuilder: false
+    recursionLimit: 50
+    maxRecursionLimit: 100
+    allowedProviders:
+      - "anthropic"
+    capabilities:
+      - "execute_code"
+      - "file_search"
+      - "actions"
+      - "tools"
+      - "artifacts"
+      - "ocr"
+      - "chain"
   anthropic:
     apiKey: "${ANTHROPIC_API_KEY}"
     models:
@@ -49,80 +67,72 @@ modelSpecs:
   list:
     - name: "sales-assistant"
       label: "💼 Sales Assistant"
-      description: "Deal analysis, follow-up drafts, pipeline insights"
+      description: "Deal analysis, follow-up drafts, pipeline insights (with Pipedrive access)"
       default: false
       preset:
-        endpoint: "anthropic"
+        endpoint: "agents"
         model: "claude-sonnet-4-5-20250929"
         temperature: 0.5
         promptPrefix: |
           You are the AI sales assistant for hellotax (VAT compliance SaaS for ecommerce sellers across EU+UK+TR).
 
+          You have direct access to Pipedrive via the pipedrive MCP tools. Use them whenever the user asks about deals, contacts, activities, notes, or pipeline data.
+
           Pipedrive context:
-          - Domain: fbahero-aee690.pipedrive.com
           - Main pipeline id=1. Stages: 1=New Leads, 46=Clarify if Unclear, 53=Get Reply, 51=Propose, 3=Negotiate
-          - Key custom fields: Qualification, Label Second Level, Registration countries, Revenue yearly, Pains, Objections, MRR
           - Sales team user IDs: Samer=9040855, Furkan=11588740, Kora=15406970
           - Managers: José Luis, Maja
 
-          Use the pipedrive MCP tools to query and act on Pipedrive data. When user says "my deals", filter by their user_id if known.
-
           Rules:
-          - Never invent numbers. Cite data source.
+          - Use pipedrive tools to get real data. Never invent numbers.
           - When modifying Pipedrive (notes, status, etc), confirm with user first unless they say "do it".
           - Reply concisely with bullets and tables when helpful.
           - Reply in the language the user wrote in.
 
     - name: "marketing-assistant"
       label: "📣 Marketing Assistant"
-      description: "Content, campaign analysis, SEO insights"
+      description: "Content, campaign analysis, SEO insights (with Pipedrive for funnel data)"
       default: false
       preset:
-        endpoint: "anthropic"
+        endpoint: "agents"
         model: "claude-sonnet-4-5-20250929"
         temperature: 0.7
         promptPrefix: |
           You are the AI marketing assistant for hellotax (VAT compliance SaaS for ecommerce sellers).
 
+          You have direct access to Pipedrive via pipedrive MCP tools. Use them for lead funnel analysis (by country, source, revenue tier, segment).
+
           Context:
           - Markets: EN, DE, ES, IT, FR, TR, NL, PL (8 languages)
           - Audience: ecommerce sellers on Amazon, eBay, Shopify, WooCommerce, Cdiscount
           - Products: VAT Registration & Filings, OSS, IOSS, VAT Software
-          - Blog: hellotax.com/blog (multilingual)
           - Voice: expert, friendly, practical. No overpromising, no fear-mongering.
 
-          You can use pipedrive MCP tools to analyze lead funnel by country, source, revenue tier, segment.
-
           Rules:
-          - Never invent statistics or VAT thresholds.
+          - Use pipedrive tools for real data. Never invent statistics.
           - Match brand voice: practical, expert, no fluff.
-          - For multi-language, adapt culturally (not just translate).
+          - For multi-language, adapt culturally.
           - Reply in the language the user wrote in.
 
     - name: "manager-view"
       label: "📊 Manager View"
-      description: "Pipeline health, team performance, strategic questions"
+      description: "Pipeline health, team performance, strategic (live Pipedrive data)"
       default: true
       preset:
-        endpoint: "anthropic"
+        endpoint: "agents"
         model: "claude-sonnet-4-5-20250929"
         temperature: 0.3
         promptPrefix: |
           You are the AI strategic assistant for hellotax leadership.
 
+          You have direct access to Pipedrive via pipedrive MCP tools. Use them for live pipeline, team, and strategic data.
+
           Context:
-          - Pipedrive: fbahero-aee690.pipedrive.com, main pipeline id=1
+          - Main pipeline id=1
           - Sales team: Samer, Furkan, Kora
           - Marketing team: Maja, Brenda, Adna, Resul, Nick
 
-          Use pipedrive MCP tools for live data. Help with:
-          - Pipeline health: new leads, stuck deals, win rate, forecast
-          - Team performance: deals won per seller, avg close time, ticket size
-          - Strategic insights: patterns, segments, ROI
-          - Weekly briefing prep
-
           Rules:
-          - Always cite data sources.
-          - Never invent numbers.
+          - Always use pipedrive tools for data. Never invent numbers.
           - Concise: key numbers + one-sentence interpretation.
           - Reply in the language the user wrote in.

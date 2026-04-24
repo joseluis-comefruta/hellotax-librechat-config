@@ -16,6 +16,10 @@ interface:
     allowedProviders:
       - "anthropic"
     disableBuilder: false
+  mcpServers:
+    use: true
+    share: true
+    public: true
 
 registration:
   socialLogins: []

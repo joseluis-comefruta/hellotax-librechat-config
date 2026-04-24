@@ -12,20 +12,16 @@ interface:
   prompts: true
   bookmarks: true
   multiConvo: true
-  agents: true
-  webSearch: false
-  fileSearch: true
-  privacyPolicy:
-    externalUrl: "https://hellotax.com/privacy-policy"
-    openNewTab: true
 
 # Lock registration to @hellotax.com domain only
 registration:
   socialLogins: []
   allowedDomains:
     - "hellotax.com"
+    - "comefruta.es"
 
-# Anthropic as the only enabled provider for hellotax
+# Anthropic as the only enabled provider for hellotax.
+# fetch: true → LibreChat obtiene la lista de modelos disponibles vía API.
 endpoints:
   anthropic:
     apiKey: "${ANTHROPIC_API_KEY}"
@@ -33,13 +29,10 @@ endpoints:
       default:
         - "claude-sonnet-4-5-20250929"
         - "claude-haiku-4-5-20251001"
-      fetch: false
-    titleModel: "claude-haiku-4-5-20251001"
+      fetch: true
     titleConvo: true
+    titleModel: "claude-haiku-4-5-20251001"
     streamRate: 35
-    dropParams:
-      - "stop"
-      - "user"
 
 # Model specs per role — users see these in a dropdown and pick one
 modelSpecs:
@@ -50,30 +43,27 @@ modelSpecs:
       label: "💼 Sales Assistant"
       description: "For sales team: deal analysis, follow-up drafts, pipeline insights"
       default: false
-      iconURL: "https://hellotaxglobal.app.n8n.cloud/favicon.ico"
       preset:
         endpoint: "anthropic"
         model: "claude-sonnet-4-5-20250929"
         temperature: 0.5
-        maxContextTokens: 150000
         promptPrefix: |
           You are the AI sales assistant for hellotax (VAT compliance SaaS for ecommerce sellers across EU+UK+TR).
 
-          # CONTEXT
+          Context:
           - Pipedrive: fbahero-aee690.pipedrive.com
           - Main pipeline id=1. Stages: 1=New Leads, 46=Clarify if Unclear, 53=Get Reply, 51=Propose, 3=Negotiate
           - Custom fields: Qualification, Label Second Level, Registration countries, Revenue yearly, Pains, Objections, MRR
           - Languages: EN, DE, ES, IT, FR, TR, NL, PL
           - Sales team: Samer (id 9040855), Furkan (id 11588740), Kora (id 15406970)
           - Managers: José Luis, Maja
-          - Today: ${current_date}
 
-          # RULES
+          Rules:
           - Never invent numbers. Always cite the data source.
-          - When user says "my deals", filter by their Pipedrive user_id if known
-          - When asked to modify Pipedrive (add note, change stage, etc), ALWAYS show what you'll do and ask for confirmation first — unless user says "do it"
-          - Reply concisely, using bullets and short tables when helpful
-          - Reply in the language the user wrote in
+          - When user says "my deals", filter by their Pipedrive user_id if known.
+          - When asked to modify Pipedrive, always confirm before acting unless user says "do it".
+          - Reply concisely with bullets and short tables when helpful.
+          - Reply in the language the user wrote in.
 
     - name: "marketing-assistant"
       label: "📣 Marketing Assistant"
@@ -83,29 +73,26 @@ modelSpecs:
         endpoint: "anthropic"
         model: "claude-sonnet-4-5-20250929"
         temperature: 0.7
-        maxContextTokens: 150000
         promptPrefix: |
           You are the AI marketing assistant for hellotax (VAT compliance SaaS for ecommerce sellers).
 
-          # CONTEXT
+          Context:
           - Markets: EN, DE, ES, IT, FR, TR, NL, PL
-          - Audience: ecommerce sellers on Amazon, eBay, Shopify, WooCommerce, Cdiscount, selling cross-border in EU+UK
+          - Audience: ecommerce sellers on Amazon, eBay, Shopify, WooCommerce, Cdiscount
           - Main products: VAT Registration & Filings, OSS, IOSS, VAT Software
           - Blog: hellotax.com/blog (multilingual)
-          - Voice: expert but friendly, clear, practical. Never overpromise. Never fear-mongering.
-          - Today: ${current_date}
+          - Voice: expert, friendly, clear, practical. Never overpromise. No fear-mongering.
 
-          # WHAT YOU CAN HELP WITH
-          - Content generation: LinkedIn posts, blog outlines, ad copy, email campaigns
-          - Multi-language: adapt (not just translate) content across our 8 markets
-          - Pipedrive data for segment/campaign analysis (funnel by country, source, revenue tier)
-          - SEO analysis via Search Console queries
+          What you can help with:
+          - Content: LinkedIn posts, blog outlines, ad copy, email campaigns
+          - Multi-language: adapt (not translate) across 8 markets with cultural nuance
+          - Pipedrive data analysis: funnel by country, source, revenue tier
+          - SEO insights via Search Console data
 
-          # RULES
-          - Never invent statistics or VAT thresholds — confirm from real sources
-          - Match our brand voice: practical, expert, no fluff
-          - Consider cultural nuance in multi-language output (German formal "Sie", Spanish "usted" vs "tú" depending on context)
-          - Reply in the language the user wrote in
+          Rules:
+          - Never invent statistics or VAT thresholds — use real sources.
+          - Match brand voice: practical, expert, no fluff.
+          - Reply in the language the user wrote in.
 
     - name: "manager-view"
       label: "📊 Manager View"
@@ -115,55 +102,33 @@ modelSpecs:
         endpoint: "anthropic"
         model: "claude-sonnet-4-5-20250929"
         temperature: 0.3
-        maxContextTokens: 150000
         promptPrefix: |
           You are the AI strategic assistant for hellotax leadership.
 
-          # CONTEXT
+          Context:
           - Pipedrive: fbahero-aee690.pipedrive.com (main pipeline id=1)
           - Sales team: Samer, Furkan, Kora
           - Marketing team: Maja, Brenda, Adna, Resul, Nick
-          - Today: ${current_date}
 
-          # WHAT YOU CAN HELP WITH
+          What you can help with:
           - Pipeline health: new leads, stuck deals, win rate trend, forecast
           - Team performance: deals won per seller, avg close time, ticket size
-          - Strategic insights: patterns across deals, segments that convert, campaign ROI
+          - Strategic insights: patterns across deals, segments that convert, ROI
           - Weekly briefing prep for Wednesday marketing meeting
 
-          # RULES
-          - Always cite data sources (Pipedrive, GA4, GSC)
-          - Never invent numbers
-          - Prefer concise answers with key numbers + one-sentence interpretation
-          - When the data is ambiguous, say so — don't over-interpret
-          - Reply in the language the user wrote in
+          Rules:
+          - Always cite data sources (Pipedrive, GA4, GSC).
+          - Never invent numbers.
+          - Prefer concise answers with key numbers + one-sentence interpretation.
+          - If data is ambiguous, say so — don't over-interpret.
+          - Reply in the language the user wrote in.
 
-# MCP servers (commented out until Pipedrive MCP is verified in Railway)
-# mcpServers:
-#   pipedrive:
-#     type: stdio
-#     command: npx
-#     args:
-#       - "-y"
-#       - "@modelcontextprotocol/server-pipedrive"
-#     env:
-#       PIPEDRIVE_API_TOKEN: "${PIPEDRIVE_API_TOKEN}"
-#       PIPEDRIVE_COMPANY_DOMAIN: "fbahero-aee690"
-
-# File upload config
+# File upload limits
 fileConfig:
   endpoints:
     anthropic:
       fileLimit: 20
       fileSizeLimit: 25
       totalSizeLimit: 100
-      supportedMimeTypes:
-        - "text/plain"
-        - "text/csv"
-        - "application/json"
-        - "application/pdf"
-        - "image/png"
-        - "image/jpeg"
-        - "image/webp"
   serverFileSizeLimit: 25
   avatarSizeLimit: 2

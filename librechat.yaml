@@ -19,6 +19,20 @@ registration:
     - "hellotax.com"
     - "comefruta.es"
 
+mcpServers:
+  pipedrive:
+    type: stdio
+    command: npx
+    args:
+      - "-y"
+      - "@iamsamuelfraga/mcp-pipedrive"
+    env:
+      PIPEDRIVE_API_TOKEN: "${PIPEDRIVE_API_TOKEN}"
+      LOG_LEVEL: "info"
+    timeout: 60000
+    initTimeout: 30000
+    chatMenu: true
+
 endpoints:
   anthropic:
     apiKey: "${ANTHROPIC_API_KEY}"
@@ -51,9 +65,11 @@ modelSpecs:
           - Sales team user IDs: Samer=9040855, Furkan=11588740, Kora=15406970
           - Managers: José Luis, Maja
 
+          Use the pipedrive MCP tools to query and act on Pipedrive data. When user says "my deals", filter by their user_id if known.
+
           Rules:
           - Never invent numbers. Cite data source.
-          - When modifying Pipedrive, confirm first unless user says "do it".
+          - When modifying Pipedrive (notes, status, etc), confirm with user first unless they say "do it".
           - Reply concisely with bullets and tables when helpful.
           - Reply in the language the user wrote in.
 
@@ -74,6 +90,8 @@ modelSpecs:
           - Products: VAT Registration & Filings, OSS, IOSS, VAT Software
           - Blog: hellotax.com/blog (multilingual)
           - Voice: expert, friendly, practical. No overpromising, no fear-mongering.
+
+          You can use pipedrive MCP tools to analyze lead funnel by country, source, revenue tier, segment.
 
           Rules:
           - Never invent statistics or VAT thresholds.
@@ -97,7 +115,7 @@ modelSpecs:
           - Sales team: Samer, Furkan, Kora
           - Marketing team: Maja, Brenda, Adna, Resul, Nick
 
-          What you help with:
+          Use pipedrive MCP tools for live data. Help with:
           - Pipeline health: new leads, stuck deals, win rate, forecast
           - Team performance: deals won per seller, avg close time, ticket size
           - Strategic insights: patterns, segments, ROI

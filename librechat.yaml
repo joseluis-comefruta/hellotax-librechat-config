@@ -29,10 +29,9 @@ mcpServers:
     command: npx
     args:
       - "-y"
-      - "@iamsamuelfraga/mcp-pipedrive"
+      - "pipedrive-mcp@latest"
     env:
       PIPEDRIVE_API_TOKEN: "${PIPEDRIVE_API_TOKEN}"
-      LOG_LEVEL: "info"
     timeout: 120000
     initTimeout: 60000
     chatMenu: true

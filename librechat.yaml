@@ -4,6 +4,20 @@ cache: true
 
 interface:
   customWelcome: "Welcome to hellotax AI Assistant. Ask anything about your deals, pipeline, campaigns, or data."
+  endpointsMenu: true
+  modelSelect: true
+  parameters: true
+  sidePanel: true
+  presets: true
+  prompts: true
+  bookmarks: true
+  multiConvo: true
+
+registration:
+  socialLogins: []
+  allowedDomains:
+    - "hellotax.com"
+    - "comefruta.es"
 
 endpoints:
   anthropic:

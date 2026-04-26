@@ -41,6 +41,19 @@ mcpServers:
     timeout: 120000
     initTimeout: 60000
     chatMenu: true
+  jira:
+    type: stdio
+    command: npx
+    args:
+      - "-y"
+      - "@aashari/mcp-server-atlassian-jira"
+    env:
+      ATLASSIAN_SITE_NAME: "${ATLASSIAN_SITE_NAME}"
+      ATLASSIAN_USER_EMAIL: "${JIRA_EMAIL}"
+      ATLASSIAN_API_TOKEN: "${JIRA_API_TOKEN}"
+    timeout: 120000
+    initTimeout: 60000
+    chatMenu: true
 
 endpoints:
   agents:

@@ -37,6 +37,7 @@ mcpServers:
     env:
       PIPEDRIVE_API_TOKEN: "${PIPEDRIVE_API_TOKEN}"
       PIPEDRIVE_READ_ONLY: "true"
+      MAX_RESULTS: "50"
       LOG_LEVEL: "info"
     timeout: 120000
     initTimeout: 60000
@@ -92,6 +93,7 @@ memory:
     titleConvo: true
     titleModel: "claude-haiku-4-5-20251001"
     streamRate: 35
+    promptCache: true
 
 modelSpecs:
   enforce: false

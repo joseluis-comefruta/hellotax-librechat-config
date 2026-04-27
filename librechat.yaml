@@ -88,12 +88,11 @@ memory:
   anthropic:
     apiKey: "${ANTHROPIC_API_KEY}"
     models:
-      - "claude-sonnet-4-5-20250929"
+      - "claude-sonnet-4-6"
       - "claude-haiku-4-5-20251001"
     titleConvo: true
     titleModel: "claude-haiku-4-5-20251001"
     streamRate: 35
-    promptCache: true
 
 modelSpecs:
   enforce: false
@@ -105,7 +104,7 @@ modelSpecs:
       default: false
       preset:
         endpoint: "anthropic"
-        model: "claude-sonnet-4-5-20250929"
+        model: "claude-sonnet-4-6"
         promptCache: true
         temperature: 0.5
         promptPrefix: |
@@ -130,7 +129,7 @@ modelSpecs:
       default: false
       preset:
         endpoint: "anthropic"
-        model: "claude-sonnet-4-5-20250929"
+        model: "claude-sonnet-4-6"
         promptCache: true
         temperature: 0.7
         promptPrefix: |
@@ -156,7 +155,7 @@ modelSpecs:
       default: true
       preset:
         endpoint: "anthropic"
-        model: "claude-sonnet-4-5-20250929"
+        model: "claude-sonnet-4-6"
         promptCache: true
         temperature: 0.3
         promptPrefix: |

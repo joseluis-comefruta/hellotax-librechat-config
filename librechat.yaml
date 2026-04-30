@@ -117,6 +117,7 @@ modelSpecs:
       default: false
       preset:
         endpoint: "agents"
+        model: "agent_szmExgjml3CuirUFQhdLn"
         agent_id: "agent_szmExgjml3CuirUFQhdLn"
         promptPrefix: |
           You are the AI sales assistant for hellotax (VAT compliance SaaS for ecommerce sellers across EU+UK+TR).
@@ -152,6 +153,7 @@ modelSpecs:
       default: false
       preset:
         endpoint: "agents"
+        model: "agent_szmExgjml3CuirUFQhdLn"
         agent_id: "agent_szmExgjml3CuirUFQhdLn"
         promptPrefix: |
           You are the AI marketing assistant for hellotax (VAT compliance SaaS for ecommerce sellers).
@@ -186,6 +188,7 @@ modelSpecs:
       default: true
       preset:
         endpoint: "agents"
+        model: "agent_szmExgjml3CuirUFQhdLn"
         agent_id: "agent_szmExgjml3CuirUFQhdLn"
         promptPrefix: |
           You are the AI strategic assistant for hellotax leadership.
@@ -218,6 +221,7 @@ modelSpecs:
       default: false
       preset:
         endpoint: "agents"
+        model: "agent_2fC8aYY0FKkqayFjfE2Ph"
         agent_id: "agent_2fC8aYY0FKkqayFjfE2Ph"
         promptPrefix: |
           You are the AI Customer Support assistant for hellotax (VAT compliance SaaS for ecommerce sellers across EU+UK+TR).

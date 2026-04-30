@@ -112,13 +112,11 @@ modelSpecs:
   prioritize: true
   list:
     - name: "sales-assistant"
-      label: "💼 Sales Assistant"
-      description: "Deal analysis, follow-up drafts, pipeline insights (with Pipedrive access)"
+      label: "💼 Sales Assistant (chat only — for Pipedrive use the Sales Agent HT under 🪶 Agents)"
+      description: "General sales chat. For real Pipedrive access switch to 🪶 Agents → Sales Agent HT."
       default: false
-      mcpServers:
-        - pipedrive
       preset:
-        endpoint: "agents"
+        endpoint: "anthropic"
         model: "claude-sonnet-4-6"
         promptCache: true
         thinking: false
@@ -152,13 +150,11 @@ modelSpecs:
           - When a custom field name is given (like @qualifyTF or any field reference): immediately call fields_list_deal_fields_mcp_pipedrive to find the field key, then use that key in deals queries. Don't ask the user for field IDs.
 
     - name: "marketing-assistant"
-      label: "📣 Marketing Assistant"
-      description: "Content, campaign analysis, SEO insights (with Pipedrive for funnel data)"
+      label: "📣 Marketing Assistant (chat only — for Pipedrive use the Sales Agent HT under 🪶 Agents)"
+      description: "General marketing chat. For real Pipedrive funnel data switch to 🪶 Agents → Sales Agent HT."
       default: false
-      mcpServers:
-        - pipedrive
       preset:
-        endpoint: "agents"
+        endpoint: "anthropic"
         model: "claude-sonnet-4-6"
         promptCache: true
         thinking: false
@@ -191,13 +187,11 @@ modelSpecs:
           - When a custom field name is given, immediately call fields_list_deal_fields_mcp_pipedrive to find its key, then use it. Don't ask the user.
 
     - name: "manager-view"
-      label: "📊 Manager View"
-      description: "Pipeline health, team performance, strategic (live Pipedrive data)"
+      label: "📊 Manager View (chat only — for live data use 🪶 Agents → Sales Agent HT)"
+      description: "General strategic chat. For live Pipedrive data switch to 🪶 Agents → Sales Agent HT."
       default: true
-      mcpServers:
-        - pipedrive
       preset:
-        endpoint: "agents"
+        endpoint: "anthropic"
         model: "claude-sonnet-4-6"
         promptCache: true
         thinking: false
@@ -228,14 +222,11 @@ modelSpecs:
           - When a field name is given, call fields_list_deal_fields_mcp_pipedrive first to find the key.
 
     - name: "cs-agent"
-      label: "🎧 CS Agent"
-      description: "Customer Support — tickets, comentarios, usuarios, KB (Zendesk con escritura)"
+      label: "🎧 CS Assistant (chat only — for Zendesk use 🪶 Agents → CS Agent)"
+      description: "General CS chat. For real Zendesk access switch to 🪶 Agents → CS Agent."
       default: false
-      mcpServers:
-        - zendesk
-        - jira
       preset:
-        endpoint: "agents"
+        endpoint: "anthropic"
         model: "claude-sonnet-4-6"
         promptCache: true
         thinking: false

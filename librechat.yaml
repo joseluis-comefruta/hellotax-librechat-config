@@ -106,6 +106,7 @@ modelSpecs:
         endpoint: "anthropic"
         model: "claude-sonnet-4-6"
         promptCache: true
+        thinking: false
         temperature: 0.5
         promptPrefix: |
           You are the AI sales assistant for hellotax (VAT compliance SaaS for ecommerce sellers across EU+UK+TR).
@@ -131,6 +132,7 @@ modelSpecs:
         endpoint: "anthropic"
         model: "claude-sonnet-4-6"
         promptCache: true
+        thinking: false
         temperature: 0.7
         promptPrefix: |
           You are the AI marketing assistant for hellotax (VAT compliance SaaS for ecommerce sellers).
@@ -157,6 +159,7 @@ modelSpecs:
         endpoint: "anthropic"
         model: "claude-sonnet-4-6"
         promptCache: true
+        thinking: false
         temperature: 0.3
         promptPrefix: |
           You are the AI strategic assistant for hellotax leadership.

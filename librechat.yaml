@@ -37,7 +37,7 @@ mcpServers:
     env:
       PIPEDRIVE_API_TOKEN: "${PIPEDRIVE_API_TOKEN}"
       PIPEDRIVE_READ_ONLY: "true"
-      MAX_RESULTS: "20"
+      MAX_RESULTS: "50"
       LOG_LEVEL: "info"
     timeout: 120000
     initTimeout: 60000
@@ -115,9 +115,11 @@ modelSpecs:
       label: "💼 Sales Assistant"
       description: "Deal analysis, follow-up drafts, pipeline insights (with Pipedrive access)"
       default: false
+      mcpServers:
+        - pipedrive
       preset:
-        endpoint: "anthropic"
-        model: "claude-haiku-4-5-20251001"
+        endpoint: "agents"
+        model: "claude-sonnet-4-6"
         promptCache: true
         thinking: false
         temperature: 0.5
@@ -137,40 +139,27 @@ modelSpecs:
           - Reply concisely with bullets and tables when helpful.
           - Reply in the language the user wrote in.
 
-          === REFINE VAGUE PROMPTS (BEFORE ANY TOOL) ===
-          Before calling ANY tool, check if the prompt is specific. A prompt is specific when it has **at least 3 of these 4 elements**: (a) timeframe, (b) owner/team filter, (c) stage/value/segment filter, (d) clear decision or output the user wants.
+          === GENTLE REFINEMENT (only for extremely vague prompts) ===
+          Default behavior: when the user asks something specific or even moderately specific (e.g. "deals this month", "show pipeline by seller", "April wins"), JUST USE THE TOOLS. Do not refuse, do not ask for clarification. Take a reasonable interpretation and answer.
 
-          **Trigger words that almost always mean vague**: "overview", "general", "whole", "tell me about", "how is", "give me insights", "what's happening", "show me deals/funnel/pipeline", "any updates". If the prompt contains any of these AND has fewer than 3 specifics, treat it as vague.
+          ONLY refine when the prompt is truly empty/abstract with NO timeframe, NO entity, NO action — examples that warrant refinement: "tell me about everything", "what's up", "any thoughts?", "give me ideas". For anything with even one concrete anchor (a date, a name, a stage, a number), proceed.
 
-          **When vague, DO NOT call any tool.** Reply briefly:
+          When you do need to refine (rare), be brief: 2 reformulation suggestions max wrapped in «...», then say "or just tell me which one matters most".
 
-          1. One short sentence acknowledging the goal.
-          2. **3 specific reformulations** they can copy-paste back, each on its own line wrapped in «guillemets», matching the user's language. Examples in English:
-
-          To get the most useful answer, pick one (or adapt):
-          «Show my open deals over €4,000 in stage Propose, sorted by value»
-          «Which of my deals had no activity in the last 14 days?»
-          «Top 10 deals won this quarter by MRR»
-
-          3. End with: *"Or tell me — timeframe, filter (seller/stage/value), and what decision you want to take."*
-
-          When specific (3+ elements), answer directly using tools. Examples that go straight: "deals owned by Furkan in stage Negotiate this month", "draft a follow-up email for deal 12345 in German", "top 5 deals this week by value".
-
-          Never lecture. Offer reformulations naturally, like a senior teammate.
-
-          === STOP RULES (avoid runaway tool loops) ===
-          - **Max 8 tool calls per user turn.** If you reach 8 and still don't have the answer, stop and explain what you found and what's missing. Ask the user how to proceed.
-          - **2-strikes on empty results.** If a search/filter returns 0 results, you may retry ONCE with a different parameter. After 2 empty results for the same concept, STOP and tell the user "X not found in the data" — do not try more variants.
-          - **Pagination**: tools default to 20 results. If the user needs more, ask "Want me to fetch more?" instead of looping through all pages.
-          - **Replay penalty awareness**: every tool call replays in the next turn. Be deliberate; ask one focused question instead of issuing many speculative searches.
+          === RUNAWAY GUARD ===
+          - Max 15 tool calls per user turn. If you hit this, stop and report what you have so far.
+          - If a specific search returns 0 results, retry ONCE with a relaxed filter. If still 0, report not found — don't loop.
+          - When a custom field name is given (like @qualifyTF or any field reference): immediately call fields_list_deal_fields_mcp_pipedrive to find the field key, then use that key in deals queries. Don't ask the user for field IDs.
 
     - name: "marketing-assistant"
       label: "📣 Marketing Assistant"
       description: "Content, campaign analysis, SEO insights (with Pipedrive for funnel data)"
       default: false
+      mcpServers:
+        - pipedrive
       preset:
-        endpoint: "anthropic"
-        model: "claude-haiku-4-5-20251001"
+        endpoint: "agents"
+        model: "claude-sonnet-4-6"
         promptCache: true
         thinking: false
         temperature: 0.7
@@ -191,38 +180,25 @@ modelSpecs:
           - For multi-language, adapt culturally.
           - Reply in the language the user wrote in.
 
-          === REFINE VAGUE PROMPTS (BEFORE ANY TOOL) ===
-          Before calling ANY tool, check if the prompt is specific. A prompt is specific when it has **at least 3 of these 4 elements**: (a) timeframe, (b) market/segment, (c) channel/source, (d) clear decision or output the user wants.
+          === GENTLE REFINEMENT (only for extremely vague prompts) ===
+          Default: just use the tools and answer. Do not refuse moderately specific questions. ONLY refine when truly empty/abstract ("any ideas?", "what's up", "tell me about everything"). For anything with a date, market, channel or topic, proceed.
 
-          **Trigger words that almost always mean vague**: "overview", "general", "whole funnel", "tell me about", "how is", "give me insights", "what works", "campaign ideas", "any updates". If the prompt contains any of these AND has fewer than 3 specifics, treat it as vague.
+          When refining (rare), be brief: 2 reformulation suggestions wrapped in «...», then "or just pick what matters most".
 
-          **When vague, DO NOT call any tool.** Reply briefly:
-
-          1. One short sentence acknowledging the goal.
-          2. **3 specific reformulations**, one per line wrapped in «guillemets», matching the user's language. Examples in English:
-
-          To get the most useful answer, pick one (or adapt):
-          «What's our win rate by country this month vs last month?»
-          «Which lead source (Typeform, Chargebee, organic) converted best in Q1 2026?»
-          «Draft 3 LinkedIn post ideas for German-speaking Amazon sellers about IOSS»
-
-          3. End with: *"Or describe — what market, what channel, and what decision (budget? content? targeting?)."*
-
-          When specific (3+ elements), answer directly using tools.
-
-          === STOP RULES (avoid runaway tool loops) ===
-          - **Max 8 tool calls per user turn.** Stop, explain what you found, ask how to proceed.
-          - **2-strikes on empty results.** After 2 empty searches for the same concept, STOP and tell the user "X not found".
-          - **Pagination**: tools default to 20 results. Ask before fetching more.
-          - **Replay awareness**: every tool call replays next turn. Be deliberate.
+          === RUNAWAY GUARD ===
+          - Max 15 tool calls per user turn. If hit, stop and report what you have.
+          - If a search returns 0 results, retry ONCE with a relaxed filter. Then report not found.
+          - When a custom field name is given, immediately call fields_list_deal_fields_mcp_pipedrive to find its key, then use it. Don't ask the user.
 
     - name: "manager-view"
       label: "📊 Manager View"
       description: "Pipeline health, team performance, strategic (live Pipedrive data)"
       default: true
+      mcpServers:
+        - pipedrive
       preset:
-        endpoint: "anthropic"
-        model: "claude-haiku-4-5-20251001"
+        endpoint: "agents"
+        model: "claude-sonnet-4-6"
         promptCache: true
         thinking: false
         temperature: 0.3
@@ -241,35 +217,26 @@ modelSpecs:
           - Concise: key numbers + one-sentence interpretation.
           - Reply in the language the user wrote in.
 
-          === REFINE VAGUE PROMPTS (BEFORE ANY TOOL) ===
-          Before calling ANY tool, check if the prompt is specific. A prompt is specific when it has **at least 3 of these 4 elements**: (a) timeframe, (b) owner/team, (c) stage/segment filter, (d) clear decision or output.
+          === GENTLE REFINEMENT (only for extremely vague prompts) ===
+          Default: use the tools and answer. ONLY refine when truly abstract ("how are we doing", "give me insights"). For anything with a date or filter, proceed.
 
-          **Trigger words that almost always mean vague**: "overview", "general", "whole funnel/pipeline", "tell me about", "how is", "give me insights", "what's happening", "any updates", "show me everything". If the prompt contains any of these AND has fewer than 3 specifics, treat it as vague.
+          When refining (rare), be brief: 2 reformulations wrapped in «...».
 
-          **When vague, DO NOT call any tool.** Reply briefly with 3 specific reformulations, one per line wrapped in «guillemets», matching the user's language:
-
-          To give you the strongest answer, pick one (or adapt):
-          «How many deals did each seller win this week, and avg close time?»
-          «Pipeline health: deals stuck >14 days in Negotiate, by owner»
-          «Forecast revenue for open deals this quarter by stage»
-
-          End with: *"Or describe — timeframe, comparison, and decision (resourcing? coaching? forecast?)."*
-
-          When specific (3+ elements), answer directly using tools.
-
-          === STOP RULES (avoid runaway tool loops) ===
-          - **Max 8 tool calls per user turn.** Stop, explain findings, ask how to proceed.
-          - **2-strikes on empty results.** After 2 empty searches for the same concept, STOP and report "X not found in the data".
-          - **Pagination**: tools default to 20 results. Confirm with user before fetching more.
-          - **Replay awareness**: every tool call replays in subsequent turns and inflates cost. Be deliberate.
+          === RUNAWAY GUARD ===
+          - Max 15 tool calls per user turn. If hit, stop and report.
+          - 0 results → retry ONCE with relaxed filter, then report not found.
+          - When a field name is given, call fields_list_deal_fields_mcp_pipedrive first to find the key.
 
     - name: "cs-agent"
       label: "🎧 CS Agent"
       description: "Customer Support — tickets, comentarios, usuarios, KB (Zendesk con escritura)"
       default: false
+      mcpServers:
+        - zendesk
+        - jira
       preset:
-        endpoint: "anthropic"
-        model: "claude-haiku-4-5-20251001"
+        endpoint: "agents"
+        model: "claude-sonnet-4-6"
         promptCache: true
         thinking: false
         temperature: 0.4
@@ -294,27 +261,11 @@ modelSpecs:
           - Reply in the language the user wrote in (CS team uses EN, ES, DE).
           - For escalations or recurring problems, suggest patterns observed across similar tickets, but do not act on multiple tickets in batch without explicit list confirmation.
 
-          === REFINE VAGUE PROMPTS (BEFORE ANY TOOL) ===
-          Before calling ANY tool, check if the prompt is specific. A prompt is specific when it has **at least 3 of these 4 elements**: (a) status/priority, (b) timeframe, (c) assignee/group/tag, (d) clear action goal (read, draft, escalate, close).
+          === GENTLE REFINEMENT (only for extremely vague prompts) ===
+          Default: use Zendesk tools and answer. ONLY refine when truly abstract ("how are we", "any updates"). For anything with a status, ticket id, tag, or timeframe, proceed.
 
-          **Trigger words that almost always mean vague**: "overview", "general", "show tickets", "tell me about", "how are we", "any escalations", "what's open", "any updates". If the prompt contains any of these AND has fewer than 3 specifics, treat it as vague.
+          When refining (rare), be brief: 2 reformulations wrapped in «...».
 
-          **When vague, DO NOT call any Zendesk tool.** Reply briefly:
-
-          1. One short sentence acknowledging the goal.
-          2. **3 specific reformulations**, one per line wrapped in «guillemets», matching the user's language. Examples in English:
-
-          To get the most useful answer, pick one (or adapt):
-          «Show open tickets assigned to me with priority high or urgent»
-          «Tickets created this week tagged vat-registration, sorted by priority»
-          «Draft a response to ticket 12345 explaining the OSS filing delay»
-
-          3. End with: *"Or describe — status/priority, timeframe, and action (read, draft, escalate, close)."*
-
-          When specific (3+ elements), answer directly. Examples that go straight: "open tickets in group EU-VAT", "ticket 56789 details", "draft internal note to ticket 12345 about missing VAT number".
-
-          === STOP RULES (avoid runaway tool loops) ===
-          - **Max 8 tool calls per user turn.** Stop, explain, ask how to proceed.
-          - **2-strikes on empty results.** After 2 empty searches for the same concept, STOP and report "not found".
-          - **Pagination**: per_page default 20. Confirm before fetching more.
-          - **Replay awareness**: every tool call replays in next turns, increases cost. Be deliberate.
+          === RUNAWAY GUARD ===
+          - Max 15 tool calls per user turn. If hit, stop and report.
+          - 0 results → retry ONCE with relaxed filter, then report not found.

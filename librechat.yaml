@@ -112,15 +112,12 @@ modelSpecs:
   prioritize: true
   list:
     - name: "sales-assistant"
-      label: "💼 Sales Assistant (chat only — for Pipedrive use the Sales Agent HT under 🪶 Agents)"
-      description: "General sales chat. For real Pipedrive access switch to 🪶 Agents → Sales Agent HT."
+      label: "💼 Sales Assistant"
+      description: "Deal analysis, follow-up drafts, pipeline insights (live Pipedrive data)"
       default: false
       preset:
-        endpoint: "anthropic"
-        model: "claude-sonnet-4-6"
-        promptCache: true
-        thinking: false
-        temperature: 0.5
+        endpoint: "agents"
+        agent_id: "agent_szmExgjml3CuirUFQhdLn"
         promptPrefix: |
           You are the AI sales assistant for hellotax (VAT compliance SaaS for ecommerce sellers across EU+UK+TR).
 
@@ -150,15 +147,12 @@ modelSpecs:
           - When a custom field name is given (like @qualifyTF or any field reference): immediately call fields_list_deal_fields_mcp_pipedrive to find the field key, then use that key in deals queries. Don't ask the user for field IDs.
 
     - name: "marketing-assistant"
-      label: "📣 Marketing Assistant (chat only — for Pipedrive use the Sales Agent HT under 🪶 Agents)"
-      description: "General marketing chat. For real Pipedrive funnel data switch to 🪶 Agents → Sales Agent HT."
+      label: "📣 Marketing Assistant"
+      description: "Content, campaign analysis, SEO insights (live Pipedrive funnel data)"
       default: false
       preset:
-        endpoint: "anthropic"
-        model: "claude-sonnet-4-6"
-        promptCache: true
-        thinking: false
-        temperature: 0.7
+        endpoint: "agents"
+        agent_id: "agent_szmExgjml3CuirUFQhdLn"
         promptPrefix: |
           You are the AI marketing assistant for hellotax (VAT compliance SaaS for ecommerce sellers).
 
@@ -187,15 +181,12 @@ modelSpecs:
           - When a custom field name is given, immediately call fields_list_deal_fields_mcp_pipedrive to find its key, then use it. Don't ask the user.
 
     - name: "manager-view"
-      label: "📊 Manager View (chat only — for live data use 🪶 Agents → Sales Agent HT)"
-      description: "General strategic chat. For live Pipedrive data switch to 🪶 Agents → Sales Agent HT."
+      label: "📊 Manager View"
+      description: "Pipeline health, team performance, strategic (live Pipedrive data)"
       default: true
       preset:
-        endpoint: "anthropic"
-        model: "claude-sonnet-4-6"
-        promptCache: true
-        thinking: false
-        temperature: 0.3
+        endpoint: "agents"
+        agent_id: "agent_szmExgjml3CuirUFQhdLn"
         promptPrefix: |
           You are the AI strategic assistant for hellotax leadership.
 
@@ -222,15 +213,12 @@ modelSpecs:
           - When a field name is given, call fields_list_deal_fields_mcp_pipedrive first to find the key.
 
     - name: "cs-agent"
-      label: "🎧 CS Assistant (chat only — for Zendesk use 🪶 Agents → CS Agent)"
-      description: "General CS chat. For real Zendesk access switch to 🪶 Agents → CS Agent."
+      label: "🎧 CS Agent"
+      description: "Customer Support — Zendesk (read+write) + Jira"
       default: false
       preset:
-        endpoint: "anthropic"
-        model: "claude-sonnet-4-6"
-        promptCache: true
-        thinking: false
-        temperature: 0.4
+        endpoint: "agents"
+        agent_id: "agent_2fC8aYY0FKkqayFjfE2Ph"
         promptPrefix: |
           You are the AI Customer Support assistant for hellotax (VAT compliance SaaS for ecommerce sellers across EU+UK+TR).
 

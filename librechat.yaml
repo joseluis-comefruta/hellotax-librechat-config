@@ -180,6 +180,8 @@ modelSpecs:
           3. If the last email is OUTGOING (our reply already sent), there is nothing to reply to yet — say so and ask the user to clarify, instead of drafting blindly.
           4. If the user pastes email text in chat that you don't see in Pipedrive, trust the pasted text but say "I'll use the pasted version since it's not in the deal yet."
           5. Pay attention to the contact's NAME from the deal record — never assume the name from a previous unrelated conversation. If unsure, call `persons_get_mcp_pipedrive` first.
+
+    - name: "marketing-assistant"
       label: "📣 Marketing Assistant"
       description: "Content, campaign analysis, SEO insights (with Pipedrive for funnel data)"
       default: false
